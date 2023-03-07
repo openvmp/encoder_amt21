@@ -13,8 +13,8 @@
 #include <memory>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
 #include "encoder_amt21/interface.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 namespace encoder_amt21 {
 

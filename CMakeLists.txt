@@ -16,13 +16,13 @@ find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(serial_bus REQUIRED)
-find_package(encoder REQUIRED)
+find_package(remote_encoder REQUIRED)
 
 # Logic shared by all targets
 include_directories(
   include
   ${serial_bus_INCLUDE_DIRS}
-  ${encoder_INCLUDE_DIRS}
+  ${remote_encoder_INCLUDE_DIRS}
 )
 
 set(project_SOURCE_FILES
@@ -31,18 +31,15 @@ set(project_SOURCE_FILES
 
 set(project_LIBRARIES
   ${rclcpp_LIBRARIES}
-  ${modbus_LIBRARIES}
-  ${modbus_rtu_LIBRARIES}
-  ${modbus_rtu_native_LIBRARIES}
-  ${stepper_driver_LIBRARIES}
-  ${stepper_driver_native_LIBRARIES}
+  ${remote_encoder_LIBRARIES}
+  ${remote_encoder_native_LIBRARIES}
 )
 
 set(project_DEPENDENCIES
   ament_index_cpp
   rclcpp
   serial_bus
-  encoder
+  remote_encoder
 )
 
 # Executable target

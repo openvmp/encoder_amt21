@@ -13,14 +13,14 @@
 #include <memory>
 #include <string>
 
-#include "serial_bus/interface.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "remote_encoder/implementation.hpp"
+#include "serial_bus/interface.hpp"
 #include "std_msgs/msg/float32.hpp"
-#include "encoder/interface.hpp"
 
 namespace encoder_amt21 {
 
-class Interface : public encoder::Interface {
+class Interface final : public remote_encoder::Implementation {
  public:
   Interface(rclcpp::Node *node);
   virtual ~Interface() {}
@@ -33,7 +33,7 @@ class Interface : public encoder::Interface {
   bool variant_multi_turn_;
   bool variant_adj_rate_;
 
-  virtual void get_current_position_() override;
+  virtual void position_get_real_() override;
   // AMT21* does not support reading the velocity.
   // virtual double get_current_velocity_() override;
 

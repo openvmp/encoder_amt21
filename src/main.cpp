@@ -7,8 +7,8 @@
  * Licensed under Apache License, Version 2.0.
  */
 
-#include "rclcpp/rclcpp.hpp"
 #include "encoder_amt21/node.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 int main(int argc, char **argv) {
   rclcpp::init(argc, argv);

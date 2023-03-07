@@ -16,12 +16,15 @@
 
 namespace encoder_amt21 {
 
-Interface::Interface(rclcpp::Node *node) : encoder::Interface(node) {
+Interface::Interface(rclcpp::Node *node)
+    : remote_encoder::Implementation(node) {
   auto prefix = get_prefix_();
 
   prov_ = serial_bus::Factory::New(node);
 
-  RCLCPP_DEBUG(node_->get_logger(), "Interface::Interface():" " started");
+  RCLCPP_DEBUG(node_->get_logger(),
+               "Interface::Interface():"
+               " started");
 
   node->declare_parameter("encoder_model", "amt212a");
   node->get_parameter("encoder_model", param_model);
@@ -31,14 +34,14 @@ Interface::Interface(rclcpp::Node *node) : encoder::Interface(node) {
   std::string model = param_model.as_string();
   std::string model_normalized;
   for (auto &&ch : model) {
-    if (ch != '-' && ch !='_' && ch != ' ') {
+    if (ch != '-' && ch != '_' && ch != ' ') {
       model_normalized.push_back(tolower(ch));
     }
   }
   // There is no logic differences between amt212 and amt213.
   // They only offer by the physical form factor.
-  if (model_normalized.rfind("amt212") == 0
-      || model_normalized.rfind("amt213") == 0) {
+  if (model_normalized.rfind("amt212") == 0 ||
+      model_normalized.rfind("amt213") == 0) {
     switch (model_normalized[6]) {
       case 'a':
         variant_14bit_ = false;
@@ -81,13 +84,14 @@ Interface::Interface(rclcpp::Node *node) : encoder::Interface(node) {
         variant_adj_rate_ = true;
         break;
       default:
-        RCLCPP_ERROR(node_->get_logger(), "Unrecognized AMT21[23] encoder model!");
+        RCLCPP_ERROR(node_->get_logger(),
+                     "Unrecognized AMT21[23] encoder model!");
     }
   } else {
     RCLCPP_ERROR(node_->get_logger(), "Unrecognized AMT21 encoder model!");
   }
 
-  get_current_position_();
+  position_get_real_();
   velocity_last_position_ = position_last_;
 
   RCLCPP_DEBUG(node_->get_logger(), "Interface::Interface(): ended");
@@ -106,12 +110,10 @@ int Interface::read_2_bytes(uint8_t addr, uint16_t &result) {
   uint8_t high = resp[1];
 
   uint8_t checksum = high >> 6;
-  uint8_t odd = 1^(1&(
-   (high>>1) ^ (high>>3) ^ (high>>5) ^ (low>>1) ^ (low>>3) ^ (low>>5) ^ (low>>7)
-  ));
-  uint8_t even = 1^(1&(
-   high ^ (high>>2) ^ (high>>4) ^ low ^ (low>>2) ^ (low>>4) ^ (low>>6)
-  ));
+  uint8_t odd = 1 ^ (1 & ((high >> 1) ^ (high >> 3) ^ (high >> 5) ^ (low >> 1) ^
+                          (low >> 3) ^ (low >> 5) ^ (low >> 7)));
+  uint8_t even = 1 ^ (1 & (high ^ (high >> 2) ^ (high >> 4) ^ low ^ (low >> 2) ^
+                           (low >> 4) ^ (low >> 6)));
   if (checksum != ((odd << 1) | even)) {
     return -1;
   }
@@ -124,7 +126,7 @@ int Interface::read_2_bytes(uint8_t addr, uint16_t &result) {
   return 0;
 }
 
-void Interface::get_current_position_() {
+void Interface::position_get_real_() {
   uint16_t position;
   if (read_2_bytes(param_addr.as_int(), position)) {
     // Return the last known good value if there is no valid response.
@@ -141,6 +143,5 @@ void Interface::get_current_position_() {
   int32_t cumulative = (int32_t)(turns << 16) + (int32_t)position;
   position_last_ = (double)cumulative / 65536.;
 }
-
 
 }  // namespace encoder_amt21
