@@ -28,7 +28,7 @@ Interface::Interface(rclcpp::Node *node)
 
   node->declare_parameter("encoder_model", "amt212a");
   node->get_parameter("encoder_model", param_model);
-  node->declare_parameter("encoder_amt21_addr", "84");
+  node->declare_parameter("encoder_amt21_addr", 84);
   node->get_parameter("encoder_amt21_addr", param_addr);
 
   std::string model = param_model.as_string();
@@ -100,7 +100,7 @@ Interface::Interface(rclcpp::Node *node)
 int Interface::read_2_bytes(uint8_t addr, uint16_t &result) {
   std::string request;
 
-  request.append(std::to_string(addr));
+  request.append((char *)&addr, 1);
   auto resp = prov_->query(2, request);
 
   if (resp.length() < 2) {
