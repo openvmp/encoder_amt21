@@ -94,6 +94,7 @@ Interface::Interface(rclcpp::Node *node)
   position_get_real_();
   velocity_last_position_ = position_last_;
 
+  init_encoder();
   RCLCPP_DEBUG(node_->get_logger(), "Interface::Interface(): ended");
 }
 
