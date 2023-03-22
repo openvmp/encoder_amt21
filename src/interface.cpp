@@ -17,7 +17,10 @@
 namespace encoder_amt21 {
 
 Interface::Interface(rclcpp::Node *node)
-    : remote_encoder::Implementation(node) {
+    : remote_encoder::Implementation(node),
+      variant_14bit_{false},
+      variant_multi_turn_{false},
+      variant_adj_rate_{false} {
   auto prefix = get_prefix_();
 
   prov_ = serial_bus::Factory::New(node);
@@ -90,6 +93,8 @@ Interface::Interface(rclcpp::Node *node)
   } else {
     RCLCPP_ERROR(node_->get_logger(), "Unrecognized AMT21 encoder model!");
   }
+
+  node_->set_parameter(rclcpp::Parameter("encoder_overflow", !variant_multi_turn_));
 
   position_get_real_();
   velocity_last_position_ = position_last_;

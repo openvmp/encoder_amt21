@@ -28,6 +28,8 @@ class Interface final : public remote_encoder::Implementation {
   rclcpp::Parameter param_model;
   rclcpp::Parameter param_addr;
 
+  virtual bool has_position() { return true; }
+
  protected:
   bool variant_14bit_;
   bool variant_multi_turn_;
