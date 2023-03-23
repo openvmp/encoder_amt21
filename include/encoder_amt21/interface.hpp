@@ -28,7 +28,7 @@ class Interface final : public remote_encoder::Implementation {
   rclcpp::Parameter param_model;
   rclcpp::Parameter param_addr;
 
-  virtual bool has_position() { return true; }
+  virtual bool has_position() override { return true; }
 
  protected:
   bool variant_14bit_;
