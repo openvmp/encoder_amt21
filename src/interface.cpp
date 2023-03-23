@@ -94,7 +94,8 @@ Interface::Interface(rclcpp::Node *node)
     RCLCPP_ERROR(node_->get_logger(), "Unrecognized AMT21 encoder model!");
   }
 
-  node_->set_parameter(rclcpp::Parameter("encoder_overflow", !variant_multi_turn_));
+  node_->set_parameter(
+      rclcpp::Parameter("encoder_overflow", !variant_multi_turn_));
 
   position_get_real_();
   velocity_last_position_ = position_last_;
@@ -147,7 +148,7 @@ void Interface::position_get_real_() {
   }
 
   int32_t cumulative = (int32_t)(turns << 16) + (int32_t)position;
-  position_last_ = (double)cumulative / 65536.;
+  position_last_ = ((double)cumulative) * 2.0 * M_PI / 65536.;
 }
 
 }  // namespace encoder_amt21
