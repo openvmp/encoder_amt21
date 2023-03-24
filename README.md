@@ -10,6 +10,20 @@ But it's designed to be universal and usable independently from the rest of Open
 This packages interacts with  encoders using RS485.
 It is expected to support the entire AMT21 product series.
 
-### Generic stepper driver interface
+## Ready for ros2\_control
+
+This package works with
+[ros2\_control](https://github.com/ros-controls/ros2_control) via
+[remote\_hardware\_interface](https://github.com/openvmp/remote_hardware_interface).
+
+### Generic encoder interface
 
 This package implements [the generic encoder interface](https://github.com/openvmp/encoder/).
+
+```shell
+$ ros2 service list
+...
+/openvmp/robot_EE3U/encoder/front_body_joint/get_position
+/openvmp/robot_EE3U/encoder/front_body_joint/get_velocity
+...
+```
