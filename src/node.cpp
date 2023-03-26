@@ -7,12 +7,12 @@
  * Licensed under Apache License, Version 2.0.
  */
 
-#include "encoder_amt21/node.hpp"
+#include "ros2_amt21/node.hpp"
 
-namespace encoder_amt21 {
+namespace ros2_amt21 {
 
 Node::Node() : rclcpp::Node::Node("encoder_amt21") {
   intf_ = std::make_shared<Interface>(this);
 }
 
-}  // namespace encoder_amt21
+}  // namespace ros2_amt21

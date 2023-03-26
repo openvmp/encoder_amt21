@@ -7,12 +7,12 @@
  * Licensed under Apache License, Version 2.0.
  */
 
-#include "encoder_amt21/node.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "ros2_amt21/node.hpp"
 
 int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<encoder_amt21::Node>();
+  auto node = std::make_shared<ros2_amt21::Node>();
 
   rclcpp::executors::MultiThreadedExecutor exec;
   exec.add_node(node);

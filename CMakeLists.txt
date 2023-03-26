@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(encoder_amt21)
+project(ros2_amt21)
 
 # Compiler settings
 if(NOT CMAKE_CXX_STANDARD)
@@ -15,13 +15,13 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(serial_bus REQUIRED)
+find_package(ros2_serial_bus REQUIRED)
 find_package(remote_encoder REQUIRED)
 
 # Logic shared by all targets
 include_directories(
   include
-  ${serial_bus_INCLUDE_DIRS}
+  ${ros2_serial_bus_INCLUDE_DIRS}
   ${remote_encoder_INCLUDE_DIRS}
 )
 
@@ -38,7 +38,7 @@ set(project_LIBRARIES
 set(project_DEPENDENCIES
   ament_index_cpp
   rclcpp
-  serial_bus
+  ros2_serial_bus
   remote_encoder
 )
 
@@ -56,7 +56,6 @@ add_library(${PROJECT_NAME}_native src/factory.cpp ${project_SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME}_native ${project_LIBRARIES})
 ament_target_dependencies(${PROJECT_NAME}_native ${project_DEPENDENCIES})
 ament_export_targets(${PROJECT_NAME}_native_library HAS_LIBRARY_TARGET)
-# ament_export_dependencies(${project_DEPENDENCIES} ${modbus_rtu_DEPENDENCIES} ${stepper_driver_DEPENDENCIES})
 ament_export_dependencies(${project_DEPENDENCIES})
 ament_export_include_directories(include)
 install(TARGETS

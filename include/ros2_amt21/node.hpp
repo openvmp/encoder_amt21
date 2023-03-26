@@ -13,10 +13,10 @@
 #include <memory>
 #include <string>
 
-#include "encoder_amt21/interface.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "ros2_amt21/interface.hpp"
 
-namespace encoder_amt21 {
+namespace ros2_amt21 {
 
 class Node : public rclcpp::Node {
  public:
@@ -26,6 +26,6 @@ class Node : public rclcpp::Node {
   std::shared_ptr<Interface> intf_;
 };
 
-}  // namespace encoder_amt21
+}  // namespace ros2_amt21
 
 #endif  // OPENVMP_ENCODER_AMT21_NODE_H
