@@ -41,6 +41,7 @@ class Interface final : public remote_encoder::Implementation {
 
  private:
   std::shared_ptr<ros2_serial_bus::Interface> prov_;
+  uint8_t addr_;
 
   int read_2_bytes(uint8_t addr, uint16_t &result);
 };

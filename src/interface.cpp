@@ -33,6 +33,7 @@ Interface::Interface(rclcpp::Node *node)
   node->get_parameter("encoder_model", param_model);
   node->declare_parameter("encoder_amt21_addr", 84);
   node->get_parameter("encoder_amt21_addr", param_addr);
+  addr_ = param_addr.as_int();
 
   std::string model = param_model.as_string();
   std::string model_normalized;
@@ -109,9 +110,14 @@ int Interface::read_2_bytes(uint8_t addr, uint16_t &result) {
 
   request.append((char *)&addr, 1);
   auto resp = prov_->query(2, request);
+  RCLCPP_DEBUG(node_->get_logger(),
+               "Interface::Interface(): serial_bus query returned");
 
   if (resp.length() < 2) {
+    return -1;
   }
+  RCLCPP_DEBUG(node_->get_logger(),
+               "Interface::Interface(): serial_bus query returned 2 bytes");
 
   uint8_t low = resp[0];
   uint8_t high = resp[1];
@@ -129,19 +135,22 @@ int Interface::read_2_bytes(uint8_t addr, uint16_t &result) {
   if (!variant_14bit_) {
     result &= ~0x0003;
   }
+  RCLCPP_DEBUG(node_->get_logger(),
+               "Interface::Interface(): serial_bus query returned %04x",
+               result);
 
   return 0;
 }
 
 void Interface::position_get_real_() {
   uint16_t position;
-  if (read_2_bytes(param_addr.as_int(), position)) {
+  if (read_2_bytes(addr_, position)) {
     // Return the last known good value if there is no valid response.
     return;
   }
   uint16_t turns = 0;
   if (variant_multi_turn_) {
-    if (read_2_bytes(param_addr.as_int() + 1, turns)) {
+    if (read_2_bytes(addr_ + 1, turns)) {
       // Return the last known good value if there is no valid response.
       return;
     }
