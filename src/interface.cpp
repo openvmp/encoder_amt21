@@ -14,6 +14,16 @@
 
 #include "ros2_serial_bus/factory.hpp"
 
+#ifndef DEBUG
+#undef RCLCPP_DEBUG
+#if 1
+#define RCLCPP_DEBUG(...)
+#else
+#define RCLCPP_DEBUG RCLCPP_INFO
+#define DEBUG 1
+#endif
+#endif
+
 namespace ros2_amt21 {
 
 Interface::Interface(rclcpp::Node *node)
@@ -39,13 +49,16 @@ Interface::Interface(rclcpp::Node *node)
   std::string model_normalized;
   for (auto &&ch : model) {
     if (ch != '-' && ch != '_' && ch != ' ') {
-      model_normalized.push_back(tolower(ch));
+      model_normalized.push_back(std::tolower(ch));
     }
   }
-  // There is no logic differences between amt212 and amt213.
-  // They only offer by the physical form factor.
-  if (model_normalized.rfind("amt212") == 0 ||
-      model_normalized.rfind("amt213") == 0) {
+  RCLCPP_INFO(node_->get_logger(), "Encoder model: %s",
+              model_normalized.c_str());
+
+  // There is no logical differences between amt212 and amt213.
+  // They only differ by the physical form factor.
+  if (model_normalized.find("amt212") == 0 ||
+      model_normalized.find("amt213") == 0) {
     switch (model_normalized[6]) {
       case 'a':
         variant_14bit_ = false;
@@ -101,7 +114,7 @@ Interface::Interface(rclcpp::Node *node)
   position_get_real_();
   velocity_last_position_ = position_last_;
 
-  init_encoder();
+  init_encoder_();
   RCLCPP_DEBUG(node_->get_logger(), "Interface::Interface(): ended");
 }
 
@@ -111,45 +124,50 @@ int Interface::read_2_bytes(uint8_t addr, uint16_t &result) {
   request.append((char *)&addr, 1);
   auto resp = prov_->query(2, request);
   RCLCPP_DEBUG(node_->get_logger(),
-               "Interface::Interface(): serial_bus query returned");
+               "read_2_bytes(): serial_bus query returned %d bytes",
+               (int)resp.length());
 
   if (resp.length() < 2) {
     return -1;
   }
-  RCLCPP_DEBUG(node_->get_logger(),
-               "Interface::Interface(): serial_bus query returned 2 bytes");
 
   uint8_t low = resp[0];
-  uint8_t high = resp[1];
+  uint8_t high = resp[1] & 0x3F;
+  uint8_t checksum = resp[1] >> 6;
+  RCLCPP_DEBUG(node_->get_logger(),
+               "read_2_bytes(): high %02x, low %02X, crc %02X", high, low,
+               checksum);
 
-  uint8_t checksum = high >> 6;
   uint8_t odd = 1 ^ (1 & ((high >> 1) ^ (high >> 3) ^ (high >> 5) ^ (low >> 1) ^
                           (low >> 3) ^ (low >> 5) ^ (low >> 7)));
   uint8_t even = 1 ^ (1 & (high ^ (high >> 2) ^ (high >> 4) ^ low ^ (low >> 2) ^
                            (low >> 4) ^ (low >> 6)));
   if (checksum != ((odd << 1) | even)) {
+    RCLCPP_INFO(node_->get_logger(), "read_2_bytes(): checksum error");
     return -1;
   }
 
-  result = ((high & 0x3F) << 8) + low;
+  result = (high << 8) + low;
   if (!variant_14bit_) {
     result &= ~0x0003;
   }
   RCLCPP_DEBUG(node_->get_logger(),
-               "Interface::Interface(): serial_bus query returned %04x",
-               result);
+               "read_2_bytes(): serial_bus query returned %04x", result);
 
   return 0;
 }
 
 void Interface::position_get_real_() {
   uint16_t position;
+  RCLCPP_DEBUG(node_->get_logger(), "position_get_real_(): get position");
   if (read_2_bytes(addr_, position)) {
     // Return the last known good value if there is no valid response.
     return;
   }
+
   uint16_t turns = 0;
   if (variant_multi_turn_) {
+    RCLCPP_DEBUG(node_->get_logger(), "position_get_real_(): get turns");
     if (read_2_bytes(addr_ + 1, turns)) {
       // Return the last known good value if there is no valid response.
       return;
