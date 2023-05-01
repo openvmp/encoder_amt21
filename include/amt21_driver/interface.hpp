@@ -15,10 +15,10 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "remote_encoder/implementation.hpp"
-#include "ros2_serial_bus/interface.hpp"
+#include "remote_serial_bus/interface.hpp"
 #include "std_msgs/msg/float32.hpp"
 
-namespace ros2_amt21 {
+namespace amt21_driver {
 
 class Interface final : public remote_encoder::Implementation {
  public:
@@ -40,12 +40,12 @@ class Interface final : public remote_encoder::Implementation {
   // virtual double get_current_velocity_() override;
 
  private:
-  std::shared_ptr<ros2_serial_bus::Interface> prov_;
+  std::shared_ptr<remote_serial_bus::Interface> prov_;
   uint8_t addr_;
 
   int read_2_bytes(uint8_t addr, uint16_t &result);
 };
 
-}  // namespace ros2_amt21
+}  // namespace amt21_driver
 
 #endif  // OPENVMP_ENCODER_AMT21_INTERFACE_H

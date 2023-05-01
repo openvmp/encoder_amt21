@@ -7,14 +7,14 @@
  * Licensed under Apache License, Version 2.0.
  */
 
-#include "ros2_amt21/factory.hpp"
+#include "amt21_driver/factory.hpp"
 
 #include <exception>
 
+#include "amt21_driver/interface.hpp"
 #include "remote_encoder/interface_remote.hpp"
-#include "ros2_amt21/interface.hpp"
 
-namespace ros2_amt21 {
+namespace amt21_driver {
 
 std::shared_ptr<remote_encoder::Interface> Factory::New(rclcpp::Node *node) {
   rclcpp::Parameter use_remote;
@@ -36,4 +36,4 @@ std::shared_ptr<remote_encoder::Interface> Factory::New(rclcpp::Node *node) {
   }
 }
 
-}  // namespace ros2_amt21
+}  // namespace amt21_driver

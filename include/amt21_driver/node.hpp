@@ -13,10 +13,10 @@
 #include <memory>
 #include <string>
 
+#include "amt21_driver/interface.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "ros2_amt21/interface.hpp"
 
-namespace ros2_amt21 {
+namespace amt21_driver {
 
 class Node : public rclcpp::Node {
  public:
@@ -26,6 +26,6 @@ class Node : public rclcpp::Node {
   std::shared_ptr<Interface> intf_;
 };
 
-}  // namespace ros2_amt21
+}  // namespace amt21_driver
 
 #endif  // OPENVMP_ENCODER_AMT21_NODE_H

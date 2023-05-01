@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ros2_amt21)
+project(amt21_driver)
 
 # Compiler settings
 if(NOT CMAKE_CXX_STANDARD)
@@ -15,13 +15,13 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(ros2_serial_bus REQUIRED)
+find_package(remote_serial_bus REQUIRED)
 find_package(remote_encoder REQUIRED)
 
 # Logic shared by all targets
 include_directories(
   include
-  ${ros2_serial_bus_INCLUDE_DIRS}
+  ${remote_serial_bus_INCLUDE_DIRS}
   ${remote_encoder_INCLUDE_DIRS}
 )
 
@@ -38,7 +38,7 @@ set(project_LIBRARIES
 set(project_DEPENDENCIES
   ament_index_cpp
   rclcpp
-  ros2_serial_bus
+  remote_serial_bus
   remote_encoder
 )
 

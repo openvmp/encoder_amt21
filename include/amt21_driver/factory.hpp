@@ -15,13 +15,13 @@
 #include "rclcpp/rclcpp.hpp"
 #include "remote_encoder/interface.hpp"
 
-namespace ros2_amt21 {
+namespace amt21_driver {
 
 class Factory {
  public:
   static std::shared_ptr<remote_encoder::Interface> New(rclcpp::Node *node);
 };
 
-}  // namespace ros2_amt21
+}  // namespace amt21_driver
 
 #endif  // OPENVMP_REMOTE_ENCODER_AMT21_FACTORY_H

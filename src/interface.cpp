@@ -7,12 +7,12 @@
  * Licensed under Apache License, Version 2.0.
  */
 
-#include "ros2_amt21/interface.hpp"
+#include "amt21_driver/interface.hpp"
 
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <locale>
 
-#include "ros2_serial_bus/factory.hpp"
+#include "remote_serial_bus/factory.hpp"
 
 #ifndef DEBUG
 #undef RCLCPP_DEBUG
@@ -24,7 +24,7 @@
 #endif
 #endif
 
-namespace ros2_amt21 {
+namespace amt21_driver {
 
 Interface::Interface(rclcpp::Node *node)
     : remote_encoder::Implementation(node),
@@ -33,7 +33,7 @@ Interface::Interface(rclcpp::Node *node)
       variant_adj_rate_{false} {
   auto prefix = get_prefix_();
 
-  prov_ = ros2_serial_bus::Factory::New(node);
+  prov_ = remote_serial_bus::Factory::New(node);
 
   RCLCPP_DEBUG(node_->get_logger(),
                "Interface::Interface():"
@@ -178,4 +178,4 @@ void Interface::position_get_real_() {
   position_last_ = ((double)cumulative) * 2.0 * M_PI / 65536.;
 }
 
-}  // namespace ros2_amt21
+}  // namespace amt21_driver
